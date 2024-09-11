@@ -70,9 +70,8 @@ app.frame('/', async (c) => {
       intents.push(<Button action={`link:${nftMetadata.external_url}`}>View on Marketplace</Button>);
     }
 
-    // Add Share button
-    const shareUrl = `https://musicplayer-gamma-five.vercel.app/api`;
-    intents.push(<Button action={`link:${shareUrl}`}>Share</Button>);
+    // Add Reshare button
+    intents.push(<Button value="reshare">Reshare</Button>);
 
     return c.res({
       image: (
@@ -87,6 +86,20 @@ app.frame('/', async (c) => {
         </div>
       ),
       intents: intents,
+    })
+  }
+
+  if (buttonValue === 'reshare') {
+    return c.res({
+      image: (
+        <div style={{ color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#000000' }}>
+          <p>Thanks for resharing this Music NFT!</p>
+          <p>Your followers will see this frame in their feed.</p>
+        </div>
+      ),
+      intents: [
+        <Button value="view_nft">Back to NFT</Button>
+      ],
     })
   }
 
