@@ -39,11 +39,10 @@ async function getMusicNFTMetadata(): Promise<NFTMetadata | null> {
 }
 
 app.frame('/', async (c) => {
-  const url = new URL(c.url);
-  console.log('Frame accessed:', url.searchParams.get('view'))
-  const view = url.searchParams.get('view')
+  const { buttonValue } = c;
+  console.log('Button value:', buttonValue);
 
-  if (view === 'nft') {
+  if (buttonValue === 'view_nft') {
     const nftMetadata = await getMusicNFTMetadata();
 
     if (!nftMetadata) {
@@ -54,13 +53,13 @@ app.frame('/', async (c) => {
           </div>
         ),
         intents: [
-          <Button action="/">Back</Button>
+          <Button value="home">Back</Button>
         ],
       })
     }
 
     const intents = [
-      <Button action="/">Back</Button>
+      <Button value="home">Back</Button>
     ];
 
     if (nftMetadata.animation_url) {
@@ -95,7 +94,7 @@ app.frame('/', async (c) => {
       </div>
     ),
     intents: [
-      <Button action="/?view=nft">View Music NFT</Button>
+      <Button value="view_nft">View Music NFT</Button>
     ],
   })
 })
