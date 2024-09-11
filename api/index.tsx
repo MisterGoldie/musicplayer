@@ -12,9 +12,6 @@ const MUSIC_NFT_TOKEN_ID = '4832244981051151330754649752691108063614181013890981
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || 'pe-VGWmYoLZ0RjSXwviVMNIDLGwgfkao'
 const ALCHEMY_API_URL = 'https://polygon-mainnet.g.alchemy.com/v2/'
 
-// Replace this with your actual frame URL
-const FRAME_URL = 'https://musicplayer-gamma-five.vercel.app/api'
-
 interface NFTMetadata {
   name: string;
   description: string;
@@ -73,9 +70,8 @@ app.frame('/', async (c) => {
       intents.push(<Button action={`link:${nftMetadata.external_url}`}>View on Marketplace</Button>);
     }
 
-    // Add Share button with external link
-    const shareUrl = `https://warpcast.com/~/compose?text=Check out this Music NFT!&embeds[]=${encodeURIComponent(FRAME_URL)}`;
-    intents.push(<Button action={`link:${shareUrl}`}>Share</Button>);
+    // Add Share button using Button.Link
+    intents.push(<Button.Link href="/">Share</Button.Link>);
 
     return c.res({
       image: (
