@@ -38,7 +38,56 @@ async function getMusicNFTMetadata(): Promise<NFTMetadata | null> {
   }
 }
 
-app.frame('/', (c) => {
+app.frame('/', async (c) => {
+  const url = new URL(c.url);
+  console.log('Frame accessed:', url.searchParams.get('view'))
+  const view = url.searchParams.get('view')
+
+  if (view === 'nft') {
+    const nftMetadata = await getMusicNFTMetadata();
+
+    if (!nftMetadata) {
+      return c.res({
+        image: (
+          <div style={{ color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#000000' }}>
+            <p>Error fetching NFT metadata</p>
+          </div>
+        ),
+        intents: [
+          <Button action="/">Back</Button>
+        ],
+      })
+    }
+
+    const intents = [
+      <Button action="/">Back</Button>
+    ];
+
+    if (nftMetadata.animation_url) {
+      intents.push(<Button action={`link:${nftMetadata.animation_url}`}>Play Music</Button>);
+    }
+
+    if (nftMetadata.external_url) {
+      intents.push(<Button action={`link:${nftMetadata.external_url}`}>View on Marketplace</Button>);
+    }
+
+    return c.res({
+      image: (
+        <div style={{ color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#000000' }}>
+          <img
+            src={nftMetadata.image}
+            alt="NFT"
+            style={{ width: '300px', height: '300px', objectFit: 'contain', borderRadius: '5px' }}
+          />
+          <p>{nftMetadata.name}</p>
+          <p style={{ fontSize: '16px', marginTop: '10px', textAlign: 'center' }}>{nftMetadata.description}</p>
+        </div>
+      ),
+      intents: intents,
+    })
+  }
+
+  // Default view (home)
   return c.res({
     image: (
       <div style={{ color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#000000' }}>
@@ -46,52 +95,8 @@ app.frame('/', (c) => {
       </div>
     ),
     intents: [
-      <Button action="route:view-nft">View Music NFT</Button>
+      <Button action="/?view=nft">View Music NFT</Button>
     ],
-  })
-})
-
-app.frame('view-nft', async (c) => {
-  const nftMetadata = await getMusicNFTMetadata();
-
-  if (!nftMetadata) {
-    return c.res({
-      image: (
-        <div style={{ color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#000000' }}>
-          <p>Error fetching NFT metadata</p>
-        </div>
-      ),
-      intents: [
-        <Button action="route:/">Back</Button>
-      ],
-    })
-  }
-
-  const intents = [
-    <Button action="route:/">Back</Button>
-  ];
-
-  if (nftMetadata.animation_url) {
-    intents.push(<Button action={`link:${nftMetadata.animation_url}`}>Play Music</Button>);
-  }
-
-  if (nftMetadata.external_url) {
-    intents.push(<Button action={`link:${nftMetadata.external_url}`}>View on Marketplace</Button>);
-  }
-
-  return c.res({
-    image: (
-      <div style={{ color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#000000' }}>
-        <img
-          src={nftMetadata.image}
-          alt="NFT"
-          style={{ width: '300px', height: '300px', objectFit: 'contain', borderRadius: '5px' }}
-        />
-        <p>{nftMetadata.name}</p>
-        <p style={{ fontSize: '16px', marginTop: '10px', textAlign: 'center' }}>{nftMetadata.description}</p>
-      </div>
-    ),
-    intents: intents,
   })
 })
 
