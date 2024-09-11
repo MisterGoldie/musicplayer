@@ -39,67 +39,80 @@ async function getMusicNFTMetadata(): Promise<NFTMetadata | null> {
 }
 
 app.frame('/', async (c) => {
-  const { buttonValue } = c;
-  console.log('Button value:', buttonValue);
+  try {
+    const { buttonValue } = c;
+    console.log('Button value:', buttonValue);
 
-  if (buttonValue === 'view_nft') {
-    const nftMetadata = await getMusicNFTMetadata();
+    if (buttonValue === 'view_nft') {
+      const nftMetadata = await getMusicNFTMetadata();
 
-    if (!nftMetadata) {
+      if (!nftMetadata) {
+        return c.res({
+          image: (
+            <div style={{ color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#000000' }}>
+              <p>Error fetching NFT metadata</p>
+            </div>
+          ),
+          intents: [
+            <Button value="home">Back</Button>
+          ],
+        })
+      }
+
+      const intents = [
+        <Button value="home">Back</Button>
+      ];
+
+      if (nftMetadata.animation_url) {
+        intents.push(<Button action={`link:${nftMetadata.animation_url}`}>Play Music</Button>);
+      }
+
+      if (nftMetadata.external_url) {
+        intents.push(<Button action={`link:${nftMetadata.external_url}`}>View on Marketplace</Button>);
+      }
+
+      intents.push(<Button.Link href="/">Share</Button.Link>);
+
       return c.res({
         image: (
           <div style={{ color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#000000' }}>
-            <p>Error fetching NFT metadata</p>
+            <img
+              src={nftMetadata.image}
+              alt="NFT"
+              style={{ width: '300px', height: '300px', objectFit: 'contain', borderRadius: '5px' }}
+            />
+            <p>{nftMetadata.name}</p>
+            <p style={{ fontSize: '16px', marginTop: '10px', textAlign: 'center' }}>{nftMetadata.description}</p>
           </div>
         ),
-        intents: [
-          <Button value="home">Back</Button>
-        ],
+        intents: intents,
       })
     }
 
-    const intents = [
-      <Button value="home">Back</Button>
-    ];
-
-    if (nftMetadata.animation_url) {
-      intents.push(<Button action={`link:${nftMetadata.animation_url}`}>Play Music</Button>);
-    }
-
-    if (nftMetadata.external_url) {
-      intents.push(<Button action={`link:${nftMetadata.external_url}`}>View on Marketplace</Button>);
-    }
-
-    // Add Share button using Button.Link
-    intents.push(<Button.Link href="/">Share</Button.Link>);
-
+    // Default view (home)
     return c.res({
       image: (
         <div style={{ color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#000000' }}>
-          <img
-            src={nftMetadata.image}
-            alt="NFT"
-            style={{ width: '300px', height: '300px', objectFit: 'contain', borderRadius: '5px' }}
-          />
-          <p>{nftMetadata.name}</p>
-          <p style={{ fontSize: '16px', marginTop: '10px', textAlign: 'center' }}>{nftMetadata.description}</p>
+          <p>Welcome to Music NFT Viewer</p>
         </div>
       ),
-      intents: intents,
+      intents: [
+        <Button value="view_nft">View Music NFT</Button>
+      ],
+    })
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    return c.res({
+      image: (
+        <div style={{ color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#000000' }}>
+          <p>An unexpected error occurred. Please try again later.</p>
+        </div>
+      ),
+      intents: [
+        <Button value="home">Back to Home</Button>
+      ],
     })
   }
-
-  // Default view (home)
-  return c.res({
-    image: (
-      <div style={{ color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#000000' }}>
-        <p>Welcome to Music NFT Viewer</p>
-      </div>
-    ),
-    intents: [
-      <Button value="view_nft">View Music NFT</Button>
-    ],
-  })
 })
 
 export const GET = handle(app)
