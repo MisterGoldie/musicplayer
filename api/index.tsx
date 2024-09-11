@@ -4,7 +4,7 @@ import axios from 'axios'
 
 const app = new Frog({
   basePath: '/api',
-  title: 'Music NFT Viewer',  // Added title property
+  title: 'Music NFT Viewer',
 })
 
 const MUSIC_NFT_ADDRESS = '0x2953399124F0cBB46d2CbACD8A89cF0599974963'
@@ -46,12 +46,12 @@ app.frame('/', (c) => {
       </div>
     ),
     intents: [
-      <Button action="route:/view-nft">View Music NFT</Button>
+      <Button action="route:view-nft">View Music NFT</Button>
     ],
   })
 })
 
-app.frame('/view-nft', async (c) => {
+app.frame('view-nft', async (c) => {
   const nftMetadata = await getMusicNFTMetadata();
 
   if (!nftMetadata) {
@@ -62,7 +62,7 @@ app.frame('/view-nft', async (c) => {
         </div>
       ),
       intents: [
-        <Button action="route:/">back</Button>
+        <Button action="route:/">Back</Button>
       ],
     })
   }
