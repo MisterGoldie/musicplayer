@@ -70,6 +70,10 @@ app.frame('/', async (c) => {
       intents.push(<Button action={`link:${nftMetadata.external_url}`}>View on Marketplace</Button>);
     }
 
+    // Add Share button
+    const shareUrl = `https://your-app-domain.com/api?view=nft`;
+    intents.push(<Button action={`link:${shareUrl}`}>Share</Button>);
+
     return c.res({
       image: (
         <div style={{ color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%', backgroundColor: '#000000' }}>
