@@ -9,8 +9,8 @@ const app = new Frog({
 
 const MUSIC_NFT_ADDRESS = '0x2953399124F0cBB46d2CbACD8A89cF0599974963'
 const MUSIC_NFT_TOKEN_ID = '48322449810511513307546497526911080636141810138909813052644406601835649957889'
-const OPENSEA_API_KEY = process.env.OPENSEA_API_KEY || 'eb90d151ee88429eac31c3b6cac0aa2e'
-const OPENSEA_API_URL = 'https://api.opensea.io/api/v1'
+const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || 'pe-VGWmYoLZ0RjSXwviVMNIDLGwgfkao'
+const ALCHEMY_API_URL = 'https://polygon-mainnet.g.alchemy.com/v2/'
 
 interface NFTMetadata {
   name: string;
@@ -22,29 +22,18 @@ interface NFTMetadata {
 }
 
 async function getMusicNFTMetadata(): Promise<NFTMetadata | null> {
-  const url = `${OPENSEA_API_URL}/asset/${MUSIC_NFT_ADDRESS}/${MUSIC_NFT_TOKEN_ID}/`
-  
+  const url = `${ALCHEMY_API_URL}${ALCHEMY_API_KEY}/getNFTMetadata`
+  const params = {
+    contractAddress: MUSIC_NFT_ADDRESS,
+    tokenId: MUSIC_NFT_TOKEN_ID,
+    tokenType: 'erc1155'
+  }
+
   try {
-    const response = await axios.get(url, {
-      headers: {
-        'X-API-KEY': OPENSEA_API_KEY
-      }
-    })
-    
-    const data = response.data
-    return {
-      name: data.name,
-      description: data.description,
-      image: data.image_url,
-      animation_url: data.animation_url,
-      external_url: data.permalink,
-      attributes: data.traits.map((trait: any) => ({
-        trait_type: trait.trait_type,
-        value: trait.value,
-      })),
-    }
+    const response = await axios.get(url, { params })
+    return response.data.metadata
   } catch (error) {
-    console.error('Error fetching Music NFT from OpenSea:', error)
+    console.error('Error fetching Music NFT:', error)
     return null
   }
 }
@@ -78,7 +67,7 @@ app.frame('/', async (c) => {
     }
 
     if (nftMetadata.external_url) {
-      intents.push(<Button action={`link:${nftMetadata.external_url}`}>View on OpenSea</Button>);
+      intents.push(<Button action={`link:${nftMetadata.external_url}`}>View on Marketplace</Button>);
     }
 
     return c.res({
