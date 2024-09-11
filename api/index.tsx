@@ -71,7 +71,7 @@ app.frame('/', async (c) => {
     }
 
     // Add Share button
-    const shareUrl = `https://your-app-domain.com/api?view=nft`;
+    const shareUrl = `https://musicplayer-gamma-five.vercel.app/api`;
     intents.push(<Button action={`link:${shareUrl}`}>Share</Button>);
 
     return c.res({
