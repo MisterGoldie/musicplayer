@@ -11,6 +11,7 @@ const MUSIC_NFT_ADDRESS = '0x2953399124F0cBB46d2CbACD8A89cF0599974963'
 const MUSIC_NFT_TOKEN_ID = '48322449810511513307546497526911080636141810138909813052644406601835649957889'
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY || 'pe-VGWmYoLZ0RjSXwviVMNIDLGwgfkao'
 const ALCHEMY_API_URL = 'https://polygon-mainnet.g.alchemy.com/v2/'
+const FRAME_URL = 'https://your-frame-url.com/api' // Replace with your actual frame URL
 
 interface NFTMetadata {
   name: string;
@@ -71,7 +72,8 @@ app.frame('/', async (c) => {
         intents.push(<Button action={`link:${nftMetadata.external_url}`}>View on Marketplace</Button>);
       }
 
-      intents.push(<Button.Link href="/">Share</Button.Link>);
+      // Add Share button with target prop
+      intents.push(<Button.Mint target={`${FRAME_URL}?nft=${MUSIC_NFT_TOKEN_ID}`}>Share</Button.Mint>);
 
       return c.res({
         image: (
