@@ -72,8 +72,8 @@ app.frame('/', async (c) => {
         intents.push(<Button action={`link:${nftMetadata.external_url}`}>View on Marketplace</Button>);
       }
 
-      // Add Share button with target prop
-      intents.push(<Button.Mint target={`${FRAME_URL}?nft=${MUSIC_NFT_TOKEN_ID}`}>Share</Button.Mint>);
+      // Add Share button
+      intents.push(<Button action="post">Share</Button>);
 
       return c.res({
         image: (
@@ -88,6 +88,9 @@ app.frame('/', async (c) => {
           </div>
         ),
         intents: intents,
+        ogImage: nftMetadata.image,
+        title: `Music NFT: ${nftMetadata.name}`,
+        description: nftMetadata.description,
       })
     }
 
@@ -101,6 +104,9 @@ app.frame('/', async (c) => {
       intents: [
         <Button value="view_nft">View Music NFT</Button>
       ],
+      ogImage: FRAME_URL,
+      title: 'Music NFT Viewer',
+      description: 'View and share Music NFTs',
     })
   } catch (error) {
     console.error('Unexpected error:', error);
